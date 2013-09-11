@@ -27,6 +27,9 @@ int main() {
   calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM3.txt"); calib_output.push_back("plot/CalibPM3.pdf"); calib_title.push_back("PMCalibration : PM3");
   calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM4.txt"); calib_output.push_back("plot/CalibPM4.pdf"); calib_title.push_back("PM Calibration : PM4");
   calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM5.txt"); calib_output.push_back("plot/CalibPM5.pdf"); calib_title.push_back("PM Calibration : PM5");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR0.txt"); calib_output.push_back("plot/CalibR0.pdf"); calib_title.push_back("PM Calibration : R0");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR1.txt"); calib_output.push_back("plot/CalibR1.pdf"); calib_title.push_back("PM Calibration : R1");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR2.txt"); calib_output.push_back("plot/CalibR2.pdf"); calib_title.push_back("PM Calibration : R2");
   calib_errx.push_back(1); calib_variable.push_back("Threshold (mV)"); calib_type.push_back(1); calib_input.push_back("data/CalibThreshold.txt"); calib_output.push_back("plot/CalibThreshold.pdf"); calib_title.push_back("Threshold Calibration");
   calib_errx.push_back(0.5); calib_variable.push_back("Width (ns)"); calib_type.push_back(2); calib_input.push_back("data/CalibWidth.txt"); calib_output.push_back("plot/CalibWidth.pdf"); calib_title.push_back("Width Calibration");
 
