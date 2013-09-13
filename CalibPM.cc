@@ -1,7 +1,8 @@
 #include "TGraphErrors.h"
 #include "TCanvas.h" 
 #include "TAxis.h"
-
+#include "TMultiGraph.h"
+#include "TLegend.h"
 
 #include <fstream>
 #include <iostream>
@@ -22,22 +23,22 @@ int main() {
   vector<string> calib_variable; calib_variable.clear();
   vector<double> calib_errx; calib_errx.clear();
 
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibS2.txt");  calib_output.push_back("plot/CalibS2.pdf");  calib_title.push_back("PMCalibration : S2");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibS1.txt");  calib_output.push_back("plot/CalibS1.pdf");  calib_title.push_back("PMCalibration : S1");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM3.txt"); calib_output.push_back("plot/CalibPM3.pdf"); calib_title.push_back("PMCalibration : PM3");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM4.txt"); calib_output.push_back("plot/CalibPM4.pdf"); calib_title.push_back("PM Calibration : PM4");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibPM5.txt"); calib_output.push_back("plot/CalibPM5.pdf"); calib_title.push_back("PM Calibration : PM5");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR0.txt"); calib_output.push_back("plot/CalibR0.pdf"); calib_title.push_back("PM Calibration : R0");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR1.txt"); calib_output.push_back("plot/CalibR1.pdf"); calib_title.push_back("PM Calibration : R1");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_type.push_back(0); calib_input.push_back("data/CalibR2.txt"); calib_output.push_back("plot/CalibR2.pdf"); calib_title.push_back("PM Calibration : R2");
-  calib_errx.push_back(1); calib_variable.push_back("Threshold (mV)"); calib_type.push_back(1); calib_input.push_back("data/CalibThreshold.txt"); calib_output.push_back("plot/CalibThreshold.pdf"); calib_title.push_back("Threshold Calibration");
-  calib_errx.push_back(0.5); calib_variable.push_back("Width (ns)"); calib_type.push_back(2); calib_input.push_back("data/CalibWidth.txt"); calib_output.push_back("plot/CalibWidth.pdf"); calib_title.push_back("Width Calibration");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_input.push_back("data/CalibPM4.txt"); calib_output.push_back("plot/CalibPM4.pdf"); calib_title.push_back("PM4");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibPM5.txt"); calib_output.push_back("plot/CalibPM5.pdf"); calib_title.push_back("PM5");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR_1.txt"); calib_output.push_back("plot/CalibR_1.pdf"); calib_title.push_back("R-1");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR1.txt"); calib_output.push_back("plot/CalibR1.pdf"); calib_title.push_back("R1");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR2.txt"); calib_output.push_back("plot/CalibR2.pdf"); calib_title.push_back("R2");
+  
 
   //Declare variables of the study
-  TGraphErrors *pm_eff=0;
+  TGraphErrors *pm_eff[calib_input.size()];
   TCanvas* canvas=new TCanvas("canvas","canvas",800,600);
-  TCanvas* canvas_superp=new TCanvas("canvas_superp","canvas_superp",800,600);
-  double N_in,N_trig,tension,epsilon,errepsilon;
+  TMultiGraph* commonGraph=new TMultiGraph();
+  TLegend *legend=new TLegend(0.15,0.7,0.3,0.9);
+  //  legend->SetFontColor(0);
+
+  //  commonGraph->SetTitle("Common Calibration");
+  double time,events,tension,freq, errfreq;
   fstream datastream;
   string buffer;
 
@@ -46,42 +47,48 @@ int main() {
     //    if (calib_type[pm]<2) continue;
     datastream.open(calib_input[pm].c_str(),fstream::in); getline(datastream,buffer);
     if (DEBUG) cout << buffer << endl;
-    pm_eff=new TGraphErrors(0);
+    pm_eff[pm]=new TGraphErrors(0);
     //read data from .txt files
-    while (datastream >> tension >> N_in >> N_trig ) {
+    while (datastream >> tension >> time >> events ) {
       //if (DEBUG) cout << "tension : " << tension << endl;
-      pm_eff->Set(pm_eff->GetN()+1);
-      epsilon=N_trig/N_in; 
-      errepsilon=sqrt(epsilon/N_in*(1+epsilon));
-      pm_eff->SetPoint(pm_eff->GetN()-1,tension,epsilon);
+      freq=events/time;
+      errfreq=sqrt(5)*freq/time;
+      pm_eff[pm]->Set(pm_eff[pm]->GetN()+1);
+      pm_eff[pm]->SetPoint(pm_eff[pm]->GetN()-1,tension,freq);
       //set statistical errors      
-      pm_eff->SetPointError(pm_eff->GetN()-1,calib_errx[pm],errepsilon);
+      pm_eff[pm]->SetPointError(pm_eff[pm]->GetN()-1,calib_errx[pm],errfreq);
     }
-    if (DEBUG==1)  cout << "Number of points : " << pm_eff->GetN() << endl;
+    if (DEBUG==1)  cout << "Number of points : " << pm_eff[pm]->GetN() << endl;
     
     //set graph titles
-    pm_eff->SetTitle(calib_title[pm].c_str());
-    pm_eff->GetXaxis()->SetTitle(calib_variable[pm].c_str());
-    pm_eff->GetYaxis()->SetTitle("N_{trigg}/N_{in}");
-    pm_eff->SetMarkerStyle(8);
-    pm_eff->SetLineColor(kRed);
-    pm_eff->SetMarkerColor(kRed);
-    pm_eff->SetMarkerSize(0.5);
+    pm_eff[pm]->SetTitle(calib_title[pm].c_str());
+    pm_eff[pm]->GetXaxis()->SetTitle(calib_variable[pm].c_str());
+    pm_eff[pm]->GetYaxis()->SetTitle("events frequency (Hz)");
+    pm_eff[pm]->SetMarkerStyle(8);
+    pm_eff[pm]->SetLineColor(kRed);
+    pm_eff[pm]->SetMarkerColor(kRed);
+    pm_eff[pm]->SetMarkerSize(1);
     
     //drawing, saving and cleaning pointers
-    canvas->cd();    
-    pm_eff->Draw("AP");
-    canvas->SaveAs(calib_output[pm].c_str());
+    // pm_eff[pm]->Draw("AP");
+    // canvas->SaveAs(calib_output[pm].c_str());
 
-    pm_eff->SetLineColor(1+pm);
-    pm_eff->SetMarkerColor(1+pm);
-    canvas_superp->cd();
-    if (!pm)    pm_eff->Draw("AP");
-    else pm_eff->Draw("APSAME");
-    pm_eff->Delete();
+    pm_eff[pm]->SetLineColor(1+pm);
+    pm_eff[pm]->SetMarkerColor(1+pm);
+    commonGraph->Add(pm_eff[pm]);
+    legend->AddEntry(pm_eff[pm],calib_title[pm].c_str(),"lpe");    
     datastream.close();
   }
-  canvas_superp->SaveAs("plot/CommonCalib.pdf") ;
+
+  //Draw Multigraph and set titles
+  commonGraph->Draw("AP");
+  legend->Draw();
+  commonGraph->SetTitle("PM Calibration");
+  commonGraph->GetXaxis()->SetTitle(calib_variable[0].c_str());
+  commonGraph->GetYaxis()->SetTitle("Event Frequency (Hz)");
+  canvas->Update(); 
+  
+  canvas->SaveAs("plot/CommonCalib.pdf") ;
 
   cout << "Went up to the end" << endl;
   return 0;
