@@ -36,6 +36,7 @@ int main() {
   //Declare variables of the study
   TGraphErrors *pm_eff=0;
   TCanvas* canvas=new TCanvas("canvas","canvas",800,600);
+  TCanvas* canvas_superp=new TCanvas("canvas_superp","canvas_superp",800,600);
   double N_in,N_trig,tension,epsilon,errepsilon;
   fstream datastream;
   string buffer;
@@ -65,15 +66,23 @@ int main() {
     pm_eff->SetMarkerStyle(8);
     pm_eff->SetLineColor(kRed);
     pm_eff->SetMarkerColor(kRed);
-    pm_eff->SetMarkerSize(0.3);
+    pm_eff->SetMarkerSize(0.5);
     
     //drawing, saving and cleaning pointers
+    canvas->cd();    
     pm_eff->Draw("AP");
     canvas->SaveAs(calib_output[pm].c_str());
+
+    pm_eff->SetLineColor(1+pm);
+    pm_eff->SetMarkerColor(1+pm);
+    canvas_superp->cd();
+    if (!pm)    pm_eff->Draw("AP");
+    else pm_eff->Draw("APSAME");
     pm_eff->Delete();
     datastream.close();
   }
- 
+  canvas_superp->SaveAs("plot/CommonCalib.pdf") ;
+
   cout << "Went up to the end" << endl;
   return 0;
 }
