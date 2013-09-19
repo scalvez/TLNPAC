@@ -18,16 +18,17 @@ int main() {
   // Set the calibration data files for all pm
   vector<int> calib_type; calib_type.clear(); //0:tension, 1:threshold, 2:width
   vector<string> calib_input; calib_input.clear();
-  vector<string> calib_output; calib_output.clear();
+  vector<string> calib_output_pdf; calib_output_pdf.clear();
+  vector<string> calib_output_root; calib_output_root.clear();
   vector<string> calib_title; calib_title.clear();
   vector<string> calib_variable; calib_variable.clear();
   vector<double> calib_errx; calib_errx.clear();
 
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_input.push_back("data/CalibPM4.txt"); calib_output.push_back("plot/CalibPM4.pdf"); calib_title.push_back("PM4");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibPM5.txt"); calib_output.push_back("plot/CalibPM5.pdf"); calib_title.push_back("PM5");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR_1.txt"); calib_output.push_back("plot/CalibR_1.pdf"); calib_title.push_back("R-1");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR1.txt"); calib_output.push_back("plot/CalibR1.pdf"); calib_title.push_back("R1");
-  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR2.txt"); calib_output.push_back("plot/CalibR2.pdf"); calib_title.push_back("R2");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)"); calib_input.push_back("data/CalibPM4.txt"); calib_output_pdf.push_back("plot/CalibPM4.pdf");calib_output_root.push_back("plot/CalibPM4.root"); calib_title.push_back("PM4");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibPM5.txt"); calib_output_pdf.push_back("plot/CalibPM5.pdf");calib_output_root.push_back("plot/CalibPM5.root"); calib_title.push_back("PM5");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR_1.txt"); calib_output_pdf.push_back("plot/CalibR_1.pdf");calib_output_root.push_back("plot/CalibR_1.root"); calib_title.push_back("R-1");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR1.txt"); calib_output_pdf.push_back("plot/CalibR1.pdf"); calib_output_root.push_back("plot/CalibR1.root");calib_title.push_back("R1");
+  calib_errx.push_back(0.001); calib_variable.push_back("Tension (kV)");  calib_input.push_back("data/CalibR2.txt"); calib_output_pdf.push_back("plot/CalibR2.pdf");calib_output_root.push_back("plot/CalibR2.root"); calib_title.push_back("R2");
   
 
   //Declare variables of the study
@@ -70,8 +71,9 @@ int main() {
     pm_eff[pm]->SetMarkerSize(1);
     
     //drawing, saving and cleaning pointers
-    // pm_eff[pm]->Draw("AP");
-    // canvas->SaveAs(calib_output[pm].c_str());
+    pm_eff[pm]->Draw("AP");
+    canvas->SaveAs(calib_output_pdf[pm].c_str());
+    canvas->SaveAs(calib_output_root[pm].c_str());
 
     pm_eff[pm]->SetLineColor(1+pm);
     pm_eff[pm]->SetMarkerColor(1+pm);
@@ -81,6 +83,7 @@ int main() {
   }
 
   //Draw Multigraph and set titles
+  canvas->Clear();
   commonGraph->Draw("AP");
   legend->Draw();
   commonGraph->SetTitle("PM Calibration");
@@ -89,6 +92,7 @@ int main() {
   canvas->Update(); 
   
   canvas->SaveAs("plot/CommonCalib.pdf") ;
+  canvas->SaveAs("plot/CommonCalib.root") ;
 
   cout << "Went up to the end" << endl;
   return 0;
