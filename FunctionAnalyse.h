@@ -6,6 +6,10 @@
 
 using namespace std;
 
+
+int DrawEventsByEvents(  string fileData);
+int CaracterizeFirstPulse(  string fileData );
+int CaracterizeSecondPulse(  string fileData );
 int FabMuonLifeTime(string fileData);
 
 

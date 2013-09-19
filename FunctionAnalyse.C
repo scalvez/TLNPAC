@@ -62,7 +62,7 @@ int DrawEventsByEvents(  string fileData) {
 
 
 int CaracterizeFirstPulse(  string fileData ) {
-  gROOT->SetStyle("plain");
+  //  gROOT->SetStyle("plain");
   gSystem->Load("DecodeMatacq_TL_cc.so");
  
 
@@ -77,26 +77,39 @@ int CaracterizeFirstPulse(  string fileData ) {
   MEvent *anEvent = 0;
   unsigned nevt = 0;
 
-  for(int i = 0 ; i<2; i++){
-    while( nevt < 4010 ) {
-      if(i==0) anEvent = myRun0.GetNextEvent();
-      if(i==1)anEvent = myRun1.GetNextEvent();
+  for(int i = 0 ; i<1; i++){
+    anEvent=myRun0.GetNextEvent();
+    if ( anEvent==0 ) {
+      cerr << "No event in Dataset" << endl;
+      return -1;
+    }
+
+    while( !anEvent == 0 ) {
+      //      if(i==0) anEvent = myRun0.GetNextEvent();
+      //      if(i==1)anEvent = myRun1.GetNextEvent();
+      
       if( nevt%100 == 0 )cout << " Event: " << nevt << endl;
-      
+
       MPulse p1 = anEvent->GetChannel(i)->GetFirstPulse();
-      
+
       if( nevt == 0 ) {
 	/// first event: create histo
 	hT = new TH1F("hT","hT", 100,-5000,0);
 	hQ = new TH1F("hQ","hQ", 50,-1100,0);
 	hV = new TH1F("hV","hV", 50,-1100,0);
       }
+      
       hT->Fill(p1.tMax);
       hQ->Fill(p1.qTot);
       hV->Fill(p1.vMax);
+      cout << nevt << endl;
       nevt++;
+      anEvent=myRun0.GetNextEvent();
     }
+
+
     nevt = 0;
+
     if(i==0){
       TCanvas *can0 = new TCanvas("canvas_Channel_0","canvas_Channel_0",1000,1000);
       can0->Divide(2,2);
@@ -106,6 +119,7 @@ int CaracterizeFirstPulse(  string fileData ) {
       can0->cd(3);  hV->DrawCopy();
       can0->Update();
     }
+
 
     if(i==1){
       TCanvas *can1 = new TCanvas("canvas_Channel_1","canvas_Channel_1",1000,1000);
@@ -123,7 +137,7 @@ int CaracterizeFirstPulse(  string fileData ) {
 }
 
 int CaracterizeSecondPulse(  string fileData ) {
-  gROOT->SetStyle("plain");
+  //  gROOT->SetStyle("plain");
   gSystem->Load("DecodeMatacq_TL_cc.so");
  
   MRun myRun0(fileData.c_str());
@@ -137,11 +151,14 @@ int CaracterizeSecondPulse(  string fileData ) {
   TH1F *hQ = 0; /// charge second pulse
   TH1F *hV = 0; /// amplitude second pulse 
 
- for(int i = 0 ; i<2; i++){
-  while( nevt < 4010 ) {
-    if(i==0)anEvent = myRun0.GetNextEvent();
-    if(i==1)anEvent = myRun1.GetNextEvent();
-    if( nevt%100 == 0 ) cout << " Event: " << nevt << endl;
+  for(int i = 0 ; i<1; i++){
+    anEvent=myRun0.GetNextEvent();
+    if ( anEvent==0 ) {
+      cerr << "No event in Dataset" << endl;
+      return -1;
+    }
+
+  while(! anEvent==0 ) {
     MPulse p2 = anEvent->GetChannel(i)->GetSecondPulse();
     
     if( nevt == 0 ) {
@@ -156,6 +173,7 @@ int CaracterizeSecondPulse(  string fileData ) {
     hV->Fill(p2.vMax);
     }
     nevt++;
+    anEvent=myRun0.GetNextEvent();
   }
   nevt=0;
   if(i==0){

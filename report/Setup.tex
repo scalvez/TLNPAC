@@ -1,0 +1,25 @@
+In this experiment, muons below $500$~MeV loose all their energy in the detectors and decay within it.
+The time between the muon and electron signal is then measured to obtain the muon lifetime.
+The detection of muons and electrons is made with a $9.5$~cm thick plastic scintillator ($R_0$) with two photomultipliers (PM). 
+For trigger purpose, three plastic slates ($R_1$, $R_2$, $R_{-1}$) are also used. 
+The geometric organisation of the different detectors is given in \Cref{DetectorLayers}.
+
+The slate $R_2$ is placed at large distance from the main scintillator $R_0$ in order to trigger the most vertical muons.
+The slate $R_1$ is placed close to $R_0$ in order to reduce the number of muons reaching $R_0$ without passing through $R_1$.
+This will reduce the background of the electron signature.
+Finally, $R_{-1}$ is placed under $R_0$ and a layer of lead to detect muons which haven't been stopped. 
+The lead is to stop the electrons that may escape from $R_0$.
+
+PMs have been calibrated to low voltage (about $1.6$~kV) in order to keep the inner background below the trigger threshold.
+To enter into the trigger selection, a signal must pass a threshold of $30$~mV.
+The voltage corresponding to slope rupture in the signal frequency plot have been applied for each PM.
+This setup reduces the interesting signal frequency but also suppress the background.
+
+Two logic triggers are tuned to select the muon events and  electron events.
+A muon event have to deposit energy in $R_2$, $R_1$ and $R_0$ but must not coincide with any deposit in $R_{-1}$. 
+The deposit in $R_0$ must be detected by both multipliers.
+This trigger keep vertical muons which stop in the main detector.
+When an event pass the muon trigger, a logic gate opens to wait for an electron triggered event.
+The electron trigger needs a deposit in $R_0$ but no deposit in any slate. 
+This trigger caracterize an event that don't come from the vertical and do not escape in the vertical direction.
+The logic diagram of the trigger is given in \Cref{LogicTrigger}
